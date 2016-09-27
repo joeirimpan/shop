@@ -2,7 +2,7 @@
 """CMS models."""
 from flask import url_for
 from fulfil_client.model import One2ManyType, StringType
-from shop.fulfilio import Model
+from shop.fulfilio import Model, ShopQuery
 
 
 class MenuItem(Model):
@@ -40,6 +40,10 @@ class ArticleCategory(Model):
     description = StringType()
     published_articles = One2ManyType('nereid.cms.article')
 
+    @classmethod
+    def get_shop_query(cls):
+        return ShopQuery(cls.rpc, cls)
+
     def get_absolute_url(self):
         return url_for('pages.category', uri=self.unique_name)
 
@@ -51,6 +55,10 @@ class Article(Model):
     uri = StringType()
     title = StringType()
     content = StringType()
+
+    @classmethod
+    def get_shop_query(cls):
+        return ShopQuery(cls.rpc, cls)
 
     def get_absolute_url(self):
         return url_for('pages.page', uri=self.uri)
