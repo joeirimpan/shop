@@ -11,6 +11,7 @@ setup(
     install_requires=[
         'Flask',
         'Flask-WTF',
+        'WTForms-Components',
         'Flask-Assets',
         'cssmin',
         'jsmin',

@@ -9,6 +9,9 @@ Flask
 # Forms
 Flask-WTF
 
+# WTF components
+WTForms-Components
+
 # Deployment
 gunicorn
 

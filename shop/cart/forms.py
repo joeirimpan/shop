@@ -17,6 +17,12 @@ class AddtoCartForm(Form):
 
     quantity = FloatField('Quantity', default=1.0, validators=[DataRequired()])
     product = IntegerField('Product', validators=[DataRequired()])
+    address_id = IntegerField('Address', validators=[Optional()])
+    shipping_date = DateField(
+        'Date',
+        format="%Y-%m-%d",
+        validators=[DateRange(min=date.today()), Optional()]
+    )
 
     def validate(self):
         """Validate the form."""
