@@ -52,6 +52,7 @@ class Party(Model):
     contact_mechanisms = One2ManyType("party.contact_mechanism")
     addresses = One2ManyType("party.address")
     payment_profiles = One2ManyType("party.payment_profile")
+    default_address = ModelType('party.address')
 
     def get_mechanism(self, name):
         for mechanism in self.contact_mechanisms:
@@ -82,6 +83,10 @@ class User(UserMixin, Model):
     @property
     def phone(self):
         return self.party.get_mechanism('phone')
+
+    @property
+    def default_address(self):
+        return self.party.default_address
 
     @classmethod
     def find_user(cls, email):

@@ -148,6 +148,19 @@ class ChangePasswordForm(Form):
         return True
 
 
+class AddressSelectField(SelectField):
+    def __init__(self, *args, **kwargs):
+        super(AddressSelectField, self).__init__(*args, **kwargs)
+        self.choices = [
+            (address.id, address.full_address)
+            for address in current_user.party.addresses
+        ]
+
+    # Override method in SelectField
+    def process_data(self, address):
+        self.data = address.id if address else None
+
+
 class AccountForm(Form):
     """Change display name form."""
 
@@ -165,4 +178,9 @@ class AccountForm(Form):
     phone = StringField(
         'Phone Number',
         render_kw={"placeholder": "Phone"}
+    )
+
+    default_address = AddressSelectField(
+        'Default Address',
+        coerce=int
     )

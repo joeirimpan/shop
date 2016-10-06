@@ -175,10 +175,17 @@ def account():
         request.form,
         name=current_user.name,
         email=current_user.email,
-        phone=current_user.phone
+        phone=current_user.phone,
+        default_address=current_user.default_address,
     )
     if form.validate_on_submit():
         current_user.name = form.name.data
+
+        if form.default_address:
+            party = current_user.party
+            party.default_address = form.default_address.data
+            party.save()
+
         if form.phone.data:
             # Search for existing phone
             contact_mechanism = ContactMechanism.query.filter_by_domain([
