@@ -57,9 +57,27 @@ class CountrySelectField(SelectField):
             for country in Country.get_list()
         ]
 
-    # Override method in SelectField
+    # Override method
     def process_data(self, country):
         self.data = country.id if country else None
+
+    # Override method
+    def process_formdata(self, valuelist):
+        """
+        Process data received over the wire from a form.
+        This will be called during form construction with data supplied
+        through the `formdata` argument.
+        :param valuelist: A list of strings to process.
+        """
+        if valuelist and isinstance(valuelist[0], basestring):
+            try:
+                country = Country.query.filter_by_domain([
+                    ('code', '=', valuelist[0])
+                ]).first()
+                data = country.id
+            except ValueError:
+                data = None
+        super(CountrySelectField, self).process_formdata([data])
 
 
 class SubdivisionSelectField(SelectField):
@@ -67,9 +85,33 @@ class SubdivisionSelectField(SelectField):
         super(SubdivisionSelectField, self).__init__(*args, **kwargs)
         self.choices = []
 
-    # Override method in SelectField
+    # Override method
     def process_data(self, subdivision):
         self.data = subdivision.id if subdivision else None
+
+    # Override method
+    def process_formdata(self, valuelist):
+        """
+        Process data received over the wire from a form.
+        This will be called during form construction with data supplied
+        through the `formdata` argument.
+        :param valuelist: A list of strings to process.
+        """
+        if valuelist and isinstance(valuelist[0], basestring):
+            # Smartystreets works for US street addresses
+            country = Country.query.filter_by_domain([
+                ('code', '=', 'US')
+            ]).first()
+            subdivision_code = 'US-%s' % valuelist[0]
+            try:
+                subdivision = Subdivision.query.filter_by_domain([
+                    ('country', '=', country.id),
+                    ('code', '=', subdivision_code)
+                ]).first()
+                data = subdivision.id
+            except ValueError:
+                data = None
+        super(SubdivisionSelectField, self).process_formdata([data])
 
     def pre_validate(self, form):
         subdivisions = [s.id for s in Subdivision.query.filter_by(country=form.country.data).all()]
