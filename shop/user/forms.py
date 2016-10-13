@@ -6,7 +6,7 @@ from shop.public.models import Country, Subdivision
 from shop.user.models import User
 from wtforms import PasswordField, SelectField, StringField
 from wtforms.validators import (DataRequired, Email, EqualTo, Length,
-                                ValidationError)
+                                ValidationError, Optional)
 
 
 class RegisterForm(Form):
@@ -104,12 +104,12 @@ class AddressForm(Form):
     )
     country = CountrySelectField(
         'Country',
-        validators=[DataRequired()],
+        validators=[Optional()],
         coerce=int
     )
     subdivision = SubdivisionSelectField(
         'State/Province/Region',
-        validators=[DataRequired()],
+        validators=[Optional()],
         coerce=int
     )
     phone = StringField(
